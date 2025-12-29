@@ -1,0 +1,16 @@
+.ut-root{ padding:16px; }
+.ut-grid{ display:flex; flex-wrap:wrap; gap:12px; }
+.ut-card{ background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); border:1px solid var(--border); border-radius:12px; padding:14px; box-shadow:var(--shadow); cursor:pointer; width:220px; transition:transform .12s, box-shadow .12s; }
+.ut-card:hover{ transform:translateY(-6px); box-shadow:0 16px 40px rgba(2,6,23,0.45); }
+.ut-card-head{ display:flex; justify-content:space-between; margin-bottom:8px; font-size:14px; color:var(--muted); }
+.ut-date{ font-weight:700; color:var(--txt); }
+.ut-type{ background:linear-gradient(90deg,#5eead4,#60a5fa); padding:6px 10px; border-radius:10px; color:#083344; font-weight:800; font-size:12px; }
+.ut-body{ font-size:13px; color:var(--muted); display:flex; flex-direction:column; gap:6px; }
+.ut-modal-overlay{ position:fixed; inset:0; background:rgba(2,6,23,0.65); display:flex; align-items:center; justify-content:center; z-index:1000; backdrop-filter: blur(4px); }
+.ut-modal{ background:var(--card); color:var(--txt); padding:20px; border-radius:var(--radius); width:min(720px,94%); max-height:90vh; overflow:auto; position:relative; box-shadow:var(--shadow); transform:translateY(0); animation:ut-pop .12s ease; }
+.ut-close{ position:absolute; right:12px; top:12px; background:rgba(255,255,255,0.03); border:1px solid var(--border); color:var(--txt); width:36px; height:36px; border-radius:10px; font-size:20px; cursor:pointer; }
+.ut-close:hover{ background:rgba(255,255,255,0.05); }
+.ut-detail-row{ margin:10px 0; }
+.ut-loading, .ut-empty{ padding:20px; color:var(--muted); }
+
+@keyframes ut-pop { from { transform: scale(0.98); opacity:0 } to { transform: scale(1); opacity:1 } }

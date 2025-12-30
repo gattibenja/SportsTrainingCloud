@@ -1,6 +1,6 @@
 export async function onRequest(context) {
   const { request, env, params } = context;
-  const backend = env.VITE_REACT_APP_API_URL || 'http://localhost:4000';
+  const backend = env.BACKEND_URL || 'http://localhost:4000';
 
   // Handle preflight
   if (request.method === 'OPTIONS') {

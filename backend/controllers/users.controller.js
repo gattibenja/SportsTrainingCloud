@@ -93,15 +93,20 @@ exports.userLogIn = async (req, res, next) => {
     );
 
     
-    const cookieOptions = {
-      httpOnly: true,
-      secure: true, 
-      sameSite: 'none',
-      maxAge: 24 * 60 * 60 * 1000 // 1 día 
-    };
+        // Determine if request is secure (behind proxy like Render set x-forwarded-proto)
+        const forwardedProto = req.headers['x-forwarded-proto'];
+        const isSecure = req.secure || (forwardedProto && forwardedProto.includes('https')) || process.env.NODE_ENV === 'production';
 
-    
-    res.cookie('token', token, cookieOptions);
+        const cookieOptions = {
+            httpOnly: true,
+            secure: Boolean(isSecure),
+            sameSite: 'none',
+            path: '/',
+            maxAge: 24 * 60 * 60 * 1000 // 1 día
+        };
+
+        // Do NOT set domain here; let the browser set the cookie for the responding origin (Pages domain)
+        res.cookie('token', token, cookieOptions);
 
     return res.status(200).json({ 
       user: {
@@ -128,13 +133,18 @@ exports.userLogIn = async (req, res, next) => {
 }
 
 exports.logOut = async (req, res, next) => {
-    res.clearCookie("token", {
-    httpOnly: true,
-    secure: true,
-    sameSite:'none',
-  });
+    const forwardedProto = req.headers['x-forwarded-proto'];
+    const isSecure = req.secure || (forwardedProto && forwardedProto.includes('https')) || process.env.NODE_ENV === 'production';
 
-  res.json({ message: "Logout exitoso" });
+    // Clear cookie using the same options used to set it (except value)
+    res.clearCookie('token', {
+        httpOnly: true,
+        secure: Boolean(isSecure),
+        sameSite: 'none',
+        path: '/',
+    });
+
+    res.json({ message: 'Logout exitoso' });
 
 }
 

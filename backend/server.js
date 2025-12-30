@@ -15,11 +15,12 @@ const routerTrainings = require("./routers/trainings.routes.js")
 const {loggerMiddleware} = require("./middlewares/logger.js")
 const {notFoundHandler} = require("./middlewares/notFoundHandler.js");
 
-const allowedOrigins = process.env.CORS_ALLOWED_ORIGINS
-  
+const allowedOriginsEnv = process.env.CORS_ALLOWED_ORIGINS || '';
+const allowedOrigins = allowedOriginsEnv.split(',').map(s => s.trim()).filter(Boolean);
+
 const corsOptions = {
-    credentials: true,
-    origin: allowedOrigins
+  credentials: true,
+  origin: allowedOrigins.length ? allowedOrigins : true
 };
 
 app.use(cors(corsOptions));

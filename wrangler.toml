@@ -1,0 +1,12 @@
+name = "sports-training-copy-pages"
+account_id = "YOUR_ACCOUNT_ID"
+compatibility_date = "2025-12-30"
+
+# Where Pages will publish the built client. Vite outputs to `dist` by default.
+[site]
+bucket = "./client/dist"
+entry-point = "functions"
+
+[vars]
+BACKEND_URL = "http://localhost:4000"
+ALLOWED_ORIGINS = "http://localhost:3000"

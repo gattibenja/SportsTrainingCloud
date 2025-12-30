@@ -1,53 +1,64 @@
-export async function onRequest({ request, env, params }) {
-  // URL de tu backend en Render
-  // Debe estar definida en Cloudflare como variable de entorno
-  // Ej: https://tu-backend.onrender.com
-  const backend = env.BACKEND_URL;
+export async function onRequest(context) {
+  const { request, env, params } = context;
+  const backend = env.BACKEND_URL || 'http://localhost:4000';
 
-  if (!backend) {
-    return new Response("BACKEND_URL not configured", { status: 500 });
+  // Handle preflight
+  if (request.method === 'OPTIONS') {
+    return new Response(null, {
+      status: 204,
+      headers: {
+        'Access-Control-Allow-Origin': request.headers.get('origin') || '*',
+        'Access-Control-Allow-Methods': 'GET,POST,PUT,PATCH,DELETE,OPTIONS',
+        'Access-Control-Allow-Headers': request.headers.get('Access-Control-Request-Headers') || 'Content-Type, Authorization',
+        'Access-Control-Allow-Credentials': 'true'
+      }
+    });
   }
 
-  // Reconstruir el path dinámico (/api/*)
+  // Rebuild target URL
   const pathSegments = params.path || [];
-  const suffix = Array.isArray(pathSegments)
-    ? pathSegments.join("/")
-    : pathSegments;
-
+  const suffix = Array.isArray(pathSegments) ? pathSegments.join('/') : pathSegments;
   const incomingUrl = new URL(request.url);
   const targetUrl = `${backend}/${suffix}${incomingUrl.search}`;
 
-  // Crear request hacia el backend
-  const init = {
-    method: request.method,
-    headers: request.headers,
-    body:
-      request.method === "GET" || request.method === "HEAD"
-        ? null
-        : await request.clone().arrayBuffer(),
-  };
-
-  // Llamada real al backend (Render)
-  const backendResponse = await fetch(targetUrl, init);
-
-  // Copiar headers de respuesta
-  const headers = new Headers(backendResponse.headers);
-
-  // 🔐 FIX CLAVE PARA SAFARI / iOS
-  // - elimina Domain
-  // - evita SameSite=None
-  // - fuerza SameSite=Lax
-  if (headers.has("set-cookie")) {
-    const fixedCookie = headers
-      .get("set-cookie")
-      .replace(/Domain=[^;]+;?/gi, "")
-      .replace(/SameSite=None/gi, "SameSite=Lax");
-
-    headers.set("set-cookie", fixedCookie);
+  // Forward only safe headers
+  const allowedHeaders = ['content-type','cookie','authorization','accept','user-agent','origin','referer','x-requested-with'];
+  const forwarded = {};
+  for (const [k,v] of request.headers) {
+    const key = k.toLowerCase();
+    if (allowedHeaders.includes(key)) forwarded[k] = v;
   }
 
-  return new Response(backendResponse.body, {
-    status: backendResponse.status,
-    headers,
-  });
+  const init = {
+    method: request.method,
+    headers: forwarded,
+    body: (request.method === 'GET' || request.method === 'HEAD') ? undefined : await request.clone().arrayBuffer()
+  };
+
+  const backendResponse = await fetch(targetUrl, init);
+
+  // Build response headers
+  const resHeaders = new Headers(backendResponse.headers);
+  const origin = request.headers.get('origin');
+  const allowedEnv = env.ALLOWED_ORIGINS || '';
+  const allowed = allowedEnv.split(',').map(s => s.trim()).filter(Boolean);
+  if (origin && allowed.length > 0 && allowed.includes(origin)) {
+    resHeaders.set('Access-Control-Allow-Origin', origin);
+  } else if (origin && allowed.length === 0) {
+    resHeaders.set('Access-Control-Allow-Origin', origin);
+  } else {
+    resHeaders.set('Access-Control-Allow-Origin', '*');
+  }
+  resHeaders.set('Access-Control-Allow-Credentials', 'true');
+
+  // If backend returned Set-Cookie, forward it unchanged except remove Domain attribute
+  // (don't change SameSite or Secure; backend should set SameSite=None & Secure when needed)
+  const setCookie = backendResponse.headers.get('set-cookie') || backendResponse.headers.get('Set-Cookie');
+  if (setCookie) {
+    const fixed = setCookie.replace(/Domain=[^;]+;?/gi, '');
+    resHeaders.append('Set-Cookie', fixed);
+  }
+
+  const body = await backendResponse.arrayBuffer();
+  return new Response(body, { status: backendResponse.status, headers: resHeaders });
 }

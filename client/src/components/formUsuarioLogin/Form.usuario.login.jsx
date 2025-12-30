@@ -29,7 +29,7 @@ export default function FormLoginUsuario() {
                 .required('La contraseña es obligatoria'),
         }),
         onSubmit: async (values, { setSubmitting, resetForm }) => {
-            console.log("Datos a enviar: ", values);
+            console.log("Datos a enviar: ", values.email);
             try {
                 setError("");
                 setExito(false);

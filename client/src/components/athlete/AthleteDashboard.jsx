@@ -2,7 +2,7 @@ import React, { useEffect, useState, useContext } from 'react';
 import * as S from './AthleteDashboard.styles.js';
 import { AuthContext } from '../../auth/AuthContext.js';
 import { format, subDays, isAfter } from 'date-fns';
-const BASE_URL = import.meta.env.VITE_REACT_APP_API_URL;
+const BASE_URL = import.meta.env.VITE_REACT_APP_API_URL || '';
 
 export default function AthleteDashboard({ userId: propUserId, compact=false }){
   const { user } = useContext(AuthContext);

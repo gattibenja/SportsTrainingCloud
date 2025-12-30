@@ -58,6 +58,41 @@ Notas sobre CORS y seguridad
 - Asegura que `CORS_ALLOWED_ORIGINS` en el backend incluye el dominio de Pages y que `cors` está configurado con `credentials: true` (ya en `server.js`).
 - Verifica que las responses de tu backend devuelvan `Set-Cookie` sin `Domain` o con el domain correcto. Las Functions reenvían `Set-Cookie` para que la cookie quede en el dominio Pages.
 
+Quick checklist
+-------------
+1) En Cloudflare Pages (Project → Settings → Environment variables):
+	- `BACKEND_URL` = `https://<your-backend>.onrender.com`
+	- `ALLOWED_ORIGINS` = `https://<your-project>.pages.dev` (coma-separados si tienes más)
+	- BORRA o DEJA VACÍO `VITE_REACT_APP_API_URL` para que el cliente use rutas relativas `/api/...`.
+
+2) En tu backend (Render):
+	- `CORS_ALLOWED_ORIGINS` incluye `https://<your-project>.pages.dev`.
+	- `cors` debe configurarse con `credentials: true` (ya en `server.js`).
+	- `res.cookie('token', ...)` debe usar `httpOnly: true`, `secure: true`, `sameSite: 'none'` y NO fijar `domain`.
+
+3) Probar después del deploy:
+	- Limpiar cookies/site data en iOS Safari.
+	- Abrir `https://<your-project>.pages.dev` y hacer login.
+	- Ver en DevTools (Safari Inspector) la petición `POST /api/users/logIn`:
+	  - Response debe incluir `Set-Cookie` y `Access-Control-Allow-Credentials: true` y `Access-Control-Allow-Origin: https://<your-project>.pages.dev`.
+
+4) Prueba de línea de comandos (desde tu máquina):
+```bash
+curl -i -X POST 'https://<your-project>.pages.dev/api/users/logIn' \
+  -H 'Origin: https://<your-project>.pages.dev' \
+  -H 'Content-Type: application/json' \
+  --data '{"email":"tu@correo","password":"tuPass"}'
+```
+
+5) Prueba con Node (script incluido):
+	- Ejecuta `node tools/test_cookie.js https://<your-project>.pages.dev/api/users/logIn tu@correo tuPass`
+	- El script imprimirá `status` y todos los response headers (busca `set-cookie`, `access-control-allow-origin`, `access-control-allow-credentials`).
+
+Notas de resolución de problemas
+------------------------------
+- Si `curl` muestra `Set-Cookie` pero Safari no la guarda: comprobar si la app corre dentro de un iframe o WebView (en esos casos iOS puede bloquear cookies; Storage Access API o UX para solicitar acceso puede ser necesario).
+- Asegúrate que `ALLOWED_ORIGINS` y `CORS_ALLOWED_ORIGINS` usan el origin EXACTO (incluye `https://`, sin trailing slash).
+
 Próximos pasos sugeridos
 - Probar el flujo de login local con `wrangler pages dev` y observar si la cookie aparece en el dominio dev.
 - Añadir manejo robusto de errores y sanitización de headers en las Functions (actualmente son POC).

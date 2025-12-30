@@ -2,7 +2,7 @@ import * as S from './nav.js'
 //import { useState, useEffect } from 'react'
 import { AuthContext } from '../../auth/AuthContext.js';
 import { useContext, useState } from 'react'; // Importamos useState
-const BASE_URL = import.meta.env.VITE_REACT_APP_API_URL;
+const BASE_URL = import.meta.env.VITE_REACT_APP_API_URL || '';
 //const logo = `${BASE_URL}/imagenes/logo.svg`
 
 function Navbar(){

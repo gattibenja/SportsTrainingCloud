@@ -3,7 +3,7 @@ import * as S from './users.js'
 import CoachUserTrainings from '../../components/coach/CoachUserTrainings.jsx';
 import { getPositionsForSport } from '../../utils/positions';
 import * as UM from './UsersModal.styles.js';
-const BASE_URL = import.meta.env.VITE_REACT_APP_API_URL;
+const BASE_URL = import.meta.env.VITE_REACT_APP_API_URL || '';
 function Users(){
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(true);

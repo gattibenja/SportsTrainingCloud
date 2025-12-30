@@ -6,7 +6,7 @@
 import Banner from "../../components/banner/Banner";
 import React, { useEffect, useState } from 'react';
 import * as S from './Dashboard.styles.js'
-const BASE_URL = import.meta.env.VITE_REACT_APP_API_URL;
+const BASE_URL = import.meta.env.VITE_REACT_APP_API_URL || '';
 
 function Dashboard(){
     //const { user } = useContext(AuthContext);

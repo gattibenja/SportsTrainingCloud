@@ -3,7 +3,7 @@
 //import { useToast } from '../../auth/ToastContext';
 import * as S from './about.js'
 import Footer from '../../components/footer/Footer.jsx';
-const BASE_URL = import.meta.env.VITE_REACT_APP_API_URL;
+const BASE_URL = import.meta.env.VITE_REACT_APP_API_URL || '';
 const aboutImage = `${BASE_URL}/imagenes/aboutImage2.jpg`;
 
 function About(){

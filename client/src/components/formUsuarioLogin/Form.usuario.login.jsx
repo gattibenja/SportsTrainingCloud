@@ -5,7 +5,7 @@ import * as S from './form.usuario.login.js'
 import { useContext } from "react";
 import { AuthContext } from "../../auth/AuthContext.js";
 import { useToast } from "../../auth/ToastContext.js";
-const BASE_URL = import.meta.env.VITE_REACT_APP_API_URL;
+const BASE_URL = import.meta.env.VITE_REACT_APP_API_URL || '';
 import { useNavigate } from "react-router-dom";
 
 export default function FormLoginUsuario() {

@@ -3,7 +3,7 @@ import { AuthContext } from '../../auth/AuthContext';
 import { useToast } from '../../auth/ToastContext';
 import { getPositionsForSport } from '../../utils/positions';
 
-const BASE_URL = import.meta.env.VITE_REACT_APP_API_URL;
+const BASE_URL = import.meta.env.VITE_REACT_APP_API_URL || '';
 
 function AthleteProfile() {
     const { user, isAuthenticated } = useContext(AuthContext);

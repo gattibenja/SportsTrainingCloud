@@ -5,7 +5,7 @@ import UserTrainings from '../../components/userTrainings/UserTrainings.jsx';
 import { useToast } from '../../auth/ToastContext';
 import S from './RegisterTrainings.styles';
 
-const BASE_URL = import.meta.env.VITE_REACT_APP_API_URL;
+const BASE_URL = import.meta.env.VITE_REACT_APP_API_URL || '';
 
 function RegisterTrainings(){
     const [showCreate, setShowCreate] = useState(false);

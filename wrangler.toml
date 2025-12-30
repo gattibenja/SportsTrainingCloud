@@ -1,5 +1,5 @@
-name = "sports-training-copy-pages"
-account_id = "YOUR_ACCOUNT_ID"
+name = "sportstrainingcloud"
+account_id = "455538eb3e15fa7086148a9b283b08f9"
 compatibility_date = "2025-12-30"
 
 # Where Pages will publish the built client. Vite outputs to `dist` by default.
@@ -7,6 +7,13 @@ compatibility_date = "2025-12-30"
 bucket = "./client/dist"
 entry-point = "functions"
 
+# Development defaults. In Cloudflare Pages project settings replace these
+# with the production values (do NOT commit secrets).
 [vars]
-BACKEND_URL = "http://localhost:4000"
-ALLOWED_ORIGINS = "http://localhost:3000"
+# URL público del backend (Render). Pages Functions usarán esta URL para proxy.
+BACKEND_URL = "https://sportstraining.onrender.com"
+# Orígenes permitidos que las Functions reflejarán en Access-Control-Allow-Origin.
+ALLOWED_ORIGINS = "https://sportstrainingcloud.pages.dev"
+
+# Nota: en Cloudflare Pages, deja `VITE_REACT_APP_API_URL` vacío o NO definida
+# para que el cliente use rutas relativas `/api/...` y pase por las Functions.

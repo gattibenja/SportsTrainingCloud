@@ -15,6 +15,7 @@ export const Modal = styled.div`
   background: var(--card);
   color: var(--txt);
   padding: 20px;
+  padding-right: 56px;
   border-radius: var(--radius);
   width: min(920px, 96%);
   max-height: 90vh;
@@ -36,6 +37,7 @@ export const Close = styled.button`
   border-radius: 10px;
   font-size: 20px;
   cursor: pointer;
+  z-index: 20;
 `;
 
 export const Header = styled.div`
@@ -71,6 +73,7 @@ export const Club = styled.div`
 export const MainInfo = styled.div`
   flex:1;
   min-width:320px;
+  padding-right: 8px;
 `;
 
 export const TitleRow = styled.div`

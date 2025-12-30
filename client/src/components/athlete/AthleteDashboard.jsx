@@ -54,7 +54,7 @@ export default function AthleteDashboard({ userId: propUserId, compact=false }){
     cumplimientoRate: 0
   };
 
-  recent.forEach((t, i) => {
+  recent.forEach((t) => {
     totals.totalDuration += Number(t.duracion || 0);
     totals.totalCasst += Number(t.casstAu || (t.duracion && t.rpe ? t.duracion * t.rpe : 0));
     totals.avgRpe += Number(t.rpe || 0);
@@ -105,38 +105,109 @@ export default function AthleteDashboard({ userId: propUserId, compact=false }){
       </S.CompactRoot>
     )
   }
+  const progress = totals.cumplimientoRate || 0;
+  const radius = 48;
+  const circumference = 2 * Math.PI * radius;
+  const offset = circumference - (progress / 100) * circumference;
+
+  const quotes = [
+    'Cada paso cuenta — sigue construyendo tus hábitos.',
+    '¡Buen trabajo! Mantén la consistencia y verás resultados.',
+    'Empieza ahora, lo agradecerás después.',
+    'Pequeñas mejoras diarias producen grandes cambios.'
+  ];
+  const quote = progress >= 75 ? quotes[1] : quotes[0];
+
+  const recentPreview = recent.slice().sort((a,b)=> new Date(b.fecha) - new Date(a.fecha)).slice(0,4);
 
   return (
     <S.Root>
       <S.Header>
-        <S.Title>Resumen semanal ({recent.length} registros)</S.Title>
-        <div>{targetUserId ? null : `Semana hasta ${format(new Date(), 'dd/MM')}`}</div>
+        <S.HeaderLeft>
+          <S.ProgressContainer>
+            <S.ProgressSvg viewBox="0 0 120 120">
+              <defs>
+                <linearGradient id="g1" x1="0%" x2="100%">
+                  <stop offset="0%" stopColor="#6EE7B7" />
+                  <stop offset="100%" stopColor="#3B82F6" />
+                </linearGradient>
+              </defs>
+              <circle cx="60" cy="60" r={radius} fill="transparent" stroke="rgba(255,255,255,0.08)" strokeWidth="12" />
+              <circle cx="60" cy="60" r={radius} fill="transparent" stroke="url(#g1)" strokeWidth="12" strokeLinecap="round"
+                strokeDasharray={`${circumference} ${circumference}`} strokeDashoffset={offset} transform="rotate(-90 60 60)" />
+              <text x="60" y="66" textAnchor="middle" fontSize="18" fill="#fff" fontWeight="700">{progress}%</text>
+            </S.ProgressSvg>
+          </S.ProgressContainer>
+          <div>
+            <S.Title>Resumen semanal ({recent.length} registros)</S.Title>
+            <S.Subtle>{targetUserId ? null : `Semana hasta ${format(new Date(), 'dd/MM')}`}</S.Subtle>
+          </div>
+        </S.HeaderLeft>
+        <S.Quote>“{quote}”</S.Quote>
       </S.Header>
+
       <S.Grid>
-        <S.Card>
-          <S.Metric>{totals.totalDuration} min</S.Metric>
-          <S.Label>Duración total</S.Label>
-        </S.Card>
-        <S.Card>
-          <S.Metric>{totals.totalCasst}</S.Metric>
-          <S.Label>CASST AU total</S.Label>
-        </S.Card>
-        <S.Card>
-          <S.Metric>{totals.avgRpe}</S.Metric>
-          <S.Label>RPE promedio</S.Label>
-        </S.Card>
-        <S.Card>
-          <S.Metric>{totals.avgSueno} h</S.Metric>
-          <S.Label>Sueño promedio</S.Label>
-        </S.Card>
-        <S.Card>
-          <S.Metric>{totals.avgDolor}</S.Metric>
-          <S.Label>Dolor muscular</S.Label>
-        </S.Card>
-        <S.Card>
-          <S.Metric>{totals.cumplimientoRate}%</S.Metric>
-          <S.Label>Cumplimiento objetivo</S.Label>
-        </S.Card>
+        <div>
+          <S.StatGrid>
+            <S.StatCard>
+              <S.Emoji>⏱️</S.Emoji>
+              <div>
+                <S.Metric>{totals.totalDuration} min</S.Metric>
+                <S.Label>Duración total</S.Label>
+              </div>
+            </S.StatCard>
+            <S.StatCard>
+              <S.Emoji>🔥</S.Emoji>
+              <div>
+                <S.Metric>{totals.totalCasst}</S.Metric>
+                <S.Label>CASST AU</S.Label>
+              </div>
+            </S.StatCard>
+            <S.StatCard>
+              <S.Emoji>📈</S.Emoji>
+              <div>
+                <S.Metric>{totals.avgRpe}</S.Metric>
+                <S.Label>RPE promedio</S.Label>
+              </div>
+            </S.StatCard>
+            <S.StatCard>
+              <S.Emoji>😴</S.Emoji>
+              <div>
+                <S.Metric>{totals.avgSueno} h</S.Metric>
+                <S.Label>Sueño promedio</S.Label>
+              </div>
+            </S.StatCard>
+            <S.StatCard>
+              <S.Emoji>💪</S.Emoji>
+              <div>
+                <S.Metric>{totals.avgDolor}</S.Metric>
+                <S.Label>Dolor muscular</S.Label>
+              </div>
+            </S.StatCard>
+            <S.StatCard>
+              <S.Emoji>🎯</S.Emoji>
+              <div>
+                <S.Metric>{totals.cumplimientoRate}%</S.Metric>
+                <S.Label>Cumplimiento</S.Label>
+              </div>
+            </S.StatCard>
+          </S.StatGrid>
+
+          <S.Subtle style={{marginTop:12}}>Entrenos recientes</S.Subtle>
+          <S.RecentList>
+            {recentPreview.length === 0 && <div style={{color:'rgba(255,255,255,0.6)'}}>Sin registros recientes</div>}
+            {recentPreview.map((r, idx) => (
+              <S.RecentItem key={r._id || idx}>
+                <div>{r.tipo || r.tipoEntreno || 'Entreno'} · {format(new Date(r.fecha), 'dd/MM')}</div>
+                <div style={{color:'rgba(255,255,255,0.9)'}}>{r.duracion || 0} min</div>
+              </S.RecentItem>
+            ))}
+          </S.RecentList>
+        </div>
+
+        <div>
+          <S.Quote>Consejo: Mantén la hidratación y enfócate en la calidad del sueño para mejorar recuperación.</S.Quote>
+        </div>
       </S.Grid>
     </S.Root>
   )

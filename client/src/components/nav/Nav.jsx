@@ -30,6 +30,7 @@ function Navbar(){
                             {isCoach ? <S.DropdownItem to="/admin/dashboard">Dashboard</S.DropdownItem>:null}
                             {isAthlete ? <S.DropdownItem to="/athlete/profile">Completar Perfil</S.DropdownItem> : null}
                             {isAthlete ? <S.DropdownItem to="/athlete/trainings">Entrenamientos</S.DropdownItem> : null}
+                            {isAthlete ? <S.DropdownItem to="/athlete/dashboard">Mi Dashboard</S.DropdownItem> : null}
                             <S.DropdownItem as="button" onClick={logout}>Salir</S.DropdownItem>
                         </S.DropdownMenu>
                         </S.UserMenuContainer>

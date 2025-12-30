@@ -66,6 +66,20 @@ Próximos pasos sugeridos
 Variable adicional para Functions
 - `ALLOWED_ORIGINS` — lista de orígenes permitidos (coma separada) que las Pages Functions validarán antes de reflejar el `Origin` en `Access-Control-Allow-Origin`. Ejemplo:
 
+Extra env var for iOS fallback
+- `ENABLE_TOKEN_IN_BODY` — si se establece en `true` el backend incluirá temporalmente el JWT en la respuesta de login (`tokenFallback`) para que el cliente iOS pueda guardarlo cifrado en `localStorage` como fallback cuando las cookies están bloqueadas. Esta opción es útil como mitigación a corto plazo pero tiene implicaciones de seguridad. Preferible usar sólo con `ALLOWED_ORIGINS` restringido y token corto (ej. 5 min).
+
+Ejemplo:
+```
+ENABLE_TOKEN_IN_BODY=true
+```
+
+Si no deseas usar este fallback, deja `ENABLE_TOKEN_IN_BODY` en `false` (o no definida) y en su lugar implementa un flow basado en redirects/PKCE.
+
+```
+ALLOWED_ORIGINS=https://mi-proyecto.pages.dev,https://app.mi-dominio.com
+```
+
 ```
 ALLOWED_ORIGINS=https://mi-proyecto.pages.dev,https://app.mi-dominio.com
 ```

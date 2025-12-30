@@ -108,20 +108,20 @@ exports.userLogIn = async (req, res, next) => {
         // Do NOT set domain here; let the browser set the cookie for the responding origin (Pages domain)
         res.cookie('token', token, cookieOptions);
 
-    return res.status(200).json({ 
-      user: {
-        message: "Credenciales validadas correctamente",
-        id: user._id,
-        name: user.name,
-        email: user.email,
-        nombre: user.nombre,
-        apellido: user.apellido,
-        role: user.role,
-        deporte: user.deporte,
-        posicion: user.posicion,
-        club: user.club
-      }
-    });
+                return res.status(200).json({ 
+                    user: {
+                        message: "Credenciales validadas correctamente",
+                        id: user._id,
+                        name: user.name,
+                        email: user.email,
+                        nombre: user.nombre,
+                        apellido: user.apellido,
+                        role: user.role,
+                        deporte: user.deporte,
+                        posicion: user.posicion,
+                        club: user.club
+                    }
+                });
 
     }catch(err){
         const error = {

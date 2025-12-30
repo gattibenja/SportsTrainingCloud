@@ -53,8 +53,10 @@ export const AuthProvider = ({children}) => {
         }
         addToast('¡Sesión iniciada con éxito!', 'success');
         const data = await response.json();
-        setUser(data.user); // Usamos la respuesta del backend para establecer el usuario
-        setIsCoach(data.user.role === 'coach')
+      setUser(data.user); // Usamos la respuesta del backend para establecer el usuario
+      setIsCoach(data.user.role === 'coach')
+
+      
       }
 
     const logout = async() => {
